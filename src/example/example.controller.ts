@@ -9,11 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ExampleService } from './example.service';
-import {
-  CreateExampleDto,
-  FindExampleDto,
-  UpdateExampleDto,
-} from './type/example';
+import { FindExampleDto } from './dto/find-example.dto';
+import { CreateExampleDto } from './dto/create-example.dto';
+import { UpdateExampleDto } from './dto/update-example.dto';
 
 @Controller('example')
 export class ExampleController {
