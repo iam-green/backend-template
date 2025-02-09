@@ -36,6 +36,12 @@ export class UserService {
     });
   }
 
+  async getByGoogleId(googleId: string) {
+    return this.db.query.user.findFirst({
+      where: eq(user.google_id, googleId),
+    });
+  }
+
   async create(data: CreateUserDto) {
     return (
       await this.db.insert(user).values(data).onConflictDoNothing().returning()
