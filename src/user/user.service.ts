@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DrizzleProvider } from 'src/database/database.module';
 import * as schema from 'src/database/database.schema';
-import { FindUserDto } from './dto/find-user.dto';
+import { FindUserDto, findUserSchema } from './dto/find-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { and, asc, between, desc, eq } from 'drizzle-orm';
@@ -15,8 +15,9 @@ export class UserService {
     private readonly db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async find(data: FindUserDto) {
-    const { id, created, sort, page, limit, from, to } = data;
+  async find(data: Partial<FindUserDto>) {
+    const { id, created, sort, page, limit, from, to } =
+      findUserSchema.parse(data);
 
     return this.db.query.user.findMany({
       where: and(

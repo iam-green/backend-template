@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../database/database.schema';
-import { FindExampleDto } from './dto/find-example.dto';
+import { FindExampleDto, findExampleSchema } from './dto/find-example.dto';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
 import { and, asc, between, desc, eq } from 'drizzle-orm';
@@ -15,8 +15,9 @@ export class ExampleService {
     private readonly db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async find(data: FindExampleDto) {
-    const { id, created, sort, page, limit, from, to } = data;
+  async find(data: Partial<FindExampleDto>) {
+    const { id, created, sort, page, limit, from, to } =
+      findExampleSchema.parse(data);
 
     return this.db.query.example.findMany({
       where: and(
