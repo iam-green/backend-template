@@ -41,6 +41,26 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ ...user, accessToken });
+    res.status(200).json({ accessToken });
+  }
+
+  @Get('refresh')
+  refresh(@Req() req: Request, @Res() res: Response) {
+    const refreshToken = req.cookies.token as string | undefined;
+    if (!refreshToken) return res.sendStatus(401);
+
+    const token = this.authService.refreshAccessToken(refreshToken);
+    if (!token) return res.sendStatus(401);
+
+    res.cookie('token', token.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV == 'production',
+      maxAge: this.configService.get<number>(
+        'REFRESH_TOKEN_EXPIRES_IN',
+        1000 * 60 * 60 * 24 * 30,
+      ),
+    });
+
+    res.status(200).json({ accessToken: token.accessToken });
   }
 }
