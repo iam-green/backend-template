@@ -54,7 +54,7 @@ export class AuthService {
   refreshAccessToken(refreshToken: string) {
     const decoded = this.verifyRefreshToken(refreshToken);
     if (!decoded) return null;
-    return this.generateToken(decoded as { id: string });
+    return this.generateToken({ id: decoded.id });
   }
 
   async googleLogin(id: string, email: string) {
