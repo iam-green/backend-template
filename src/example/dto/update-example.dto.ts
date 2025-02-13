@@ -1,6 +1,6 @@
-import { createZodDto } from 'nestjs-zod';
-import { createExampleSchema } from './create-example.dto';
+import { CreateExampleDto, createExampleSchema } from './create-example.dto';
+import { PartialType } from '@nestjs/swagger';
 
 export const updateExampleSchema = createExampleSchema.partial();
 
-export class UpdateExampleDto extends createZodDto(updateExampleSchema) {}
+export class UpdateExampleDto extends PartialType(CreateExampleDto) {}

@@ -1,9 +1,12 @@
-import { createZodDto } from 'nestjs-zod';
-import { exampleSchema } from '../example.schema';
+import { ExampleDto, exampleSchema } from './example.dto';
+import { OmitType } from '@nestjs/swagger';
 
 export const createExampleSchema = exampleSchema.omit({
   id: true,
   created: true,
 });
 
-export class CreateExampleDto extends createZodDto(createExampleSchema) {}
+export class CreateExampleDto extends OmitType(ExampleDto, [
+  'id',
+  'created',
+] as const) {}
