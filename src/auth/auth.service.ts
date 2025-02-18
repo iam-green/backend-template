@@ -2,7 +2,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { user } from 'src/user/user.schema';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
@@ -57,8 +56,21 @@ export class AuthService {
     return this.generateToken({ id: decoded.id });
   }
 
-  async googleLogin(id: string, email: string) {
-    const user = await this.userService.getByGoogleId(id);
-    return user ?? this.userService.create({ google_id: id, email });
+  async googleLogin(google_id: string, email: string) {
+    let user = await this.userService.getByEmail(email);
+    if (user && user.google_id != google_id)
+      user = await this.userService.update(user.id, { google_id });
+    return (
+      user ?? this.userService.create({ google_id, discord_id: null, email })
+    );
+  }
+
+  async discordLogin(discord_id: string, email: string) {
+    let user = await this.userService.getByEmail(email);
+    if (user && user.discord_id != discord_id)
+      user = await this.userService.update(user.id, { discord_id });
+    return (
+      user ?? this.userService.create({ google_id: null, discord_id, email })
+    );
   }
 }
