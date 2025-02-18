@@ -1,9 +1,17 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { IGoogleUser } from './interface/google-user.interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -13,10 +21,15 @@ export class AuthController {
   ) {}
 
   @Get('google')
+  @ApiOperation({ summary: 'Google Auth', description: 'Google Auth' })
   @UseGuards(AuthGuard('google'))
   googleAuth() {}
 
   @Get('google/callback')
+  @ApiOperation({
+    summary: 'Google Auth Callback',
+    description: 'Google Auth Callback',
+  })
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(
     @Req()
@@ -45,12 +58,13 @@ export class AuthController {
   }
 
   @Get('refresh')
+  @ApiOperation({ summary: 'Refresh Token', description: 'Refresh Token' })
   refresh(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies.token as string | undefined;
-    if (!refreshToken) return res.sendStatus(401);
+    const refreshToken: string | null = req.cookies.token;
+    if (!refreshToken) throw new UnauthorizedException();
 
     const token = this.authService.refreshAccessToken(refreshToken);
-    if (!token) return res.sendStatus(401);
+    if (!token) throw new UnauthorizedException();
 
     res.cookie('token', token.refreshToken, {
       httpOnly: true,
