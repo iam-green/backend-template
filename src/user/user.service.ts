@@ -36,9 +36,21 @@ export class UserService {
     });
   }
 
-  async getByGoogleId(googleId: string) {
+  async getByEmail(email: string) {
     return this.db.query.user.findFirst({
-      where: eq(user.google_id, googleId),
+      where: eq(user.email, email),
+    });
+  }
+
+  async getByGoogleId(google_id: string) {
+    return this.db.query.user.findFirst({
+      where: eq(user.google_id, google_id),
+    });
+  }
+
+  async getByDiscordId(discord_id: string) {
+    return this.db.query.user.findFirst({
+      where: eq(user.discord_id, discord_id),
     });
   }
 
