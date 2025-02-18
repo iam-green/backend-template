@@ -15,6 +15,13 @@
       "when": 1738975607367,
       "tag": "0001_funny_morg",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1739897547265,
+      "tag": "0002_chubby_diamondback",
+      "breakpoints": true
     }
   ]
 }
