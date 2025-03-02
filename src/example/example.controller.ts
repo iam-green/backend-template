@@ -13,10 +13,11 @@ import { ExampleService } from './example.service';
 import { FindExampleDto } from './dto/find-example.dto';
 import { CreateExampleDto } from './dto/create-example.dto';
 import { UpdateExampleDto } from './dto/update-example.dto';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ExampleDto } from './dto/example.dto';
 import { Response } from 'express';
 
+@ApiTags('Example')
 @Controller('example')
 export class ExampleController {
   constructor(private readonly userService: ExampleService) {}

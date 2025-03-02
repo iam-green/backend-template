@@ -11,10 +11,11 @@ import { AuthService } from './auth.service';
 import { IGoogleUser } from './interface/google-user.interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IDiscordUser } from './interface/discord-user.interface';
 import { UserDto } from 'src/user/dto/user.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
