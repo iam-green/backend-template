@@ -8,11 +8,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { IGoogleUser } from './interface/google-user.interface';
+import { IDiscordUser, IGoogleUser } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { IDiscordUser } from './interface/discord-user.interface';
 import { UserDto } from 'src/user/dto/user.dto';
 
 @ApiTags('Auth')

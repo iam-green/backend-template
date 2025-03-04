@@ -1,4 +1,4 @@
-import { FindOptionDto, findOptionSchema } from 'src/types/find-option.dto';
+import { FindOptionDto, findOptionSchema } from 'src/types';
 import { UserDto, userSchema } from './user.dto';
 import { IntersectionType, PartialType } from '@nestjs/swagger';
 

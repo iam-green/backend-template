@@ -2,9 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DrizzleProvider } from 'src/database/database.module';
 import * as schema from 'src/database/database.schema';
-import { FindUserDto, findUserSchema } from './dto/find-user.dto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  FindUserDto,
+  findUserSchema,
+} from './dto';
 import { and, asc, between, desc, eq } from 'drizzle-orm';
 import { user } from 'src/database/database.schema';
 

@@ -10,11 +10,13 @@ import {
   Res,
 } from '@nestjs/common';
 import { ExampleService } from './example.service';
-import { FindExampleDto } from './dto/find-example.dto';
-import { CreateExampleDto } from './dto/create-example.dto';
-import { UpdateExampleDto } from './dto/update-example.dto';
+import {
+  ExampleDto,
+  FindExampleDto,
+  CreateExampleDto,
+  UpdateExampleDto,
+} from './dto';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ExampleDto } from './dto/example.dto';
 import { Response } from 'express';
 
 @ApiTags('Example')
