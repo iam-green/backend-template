@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DrizzleProvider } from 'src/database/database.module';
-import * as schema from 'src/database/database.schema';
+import {
+  DrizzleProvider,
+  DrizzleProviderType,
+} from 'src/database/database.module';
 import {
   CreateUserDto,
   UpdateUserDto,
@@ -15,7 +16,7 @@ import { user } from 'src/database/database.schema';
 export class UserService {
   constructor(
     @Inject(DrizzleProvider)
-    private readonly db: NodePgDatabase<typeof schema>,
+    private readonly db: DrizzleProviderType,
   ) {}
 
   async find(data: Partial<FindUserDto>) {
