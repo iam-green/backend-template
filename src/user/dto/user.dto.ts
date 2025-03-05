@@ -9,12 +9,12 @@ export interface UserDto {
   /**
    * The user's Google ID.
    */
-  google_id?: string;
+  google_id: string | null;
 
   /**
    * The user's Discord ID.
    */
-  discord_id?: string;
+  discord_id: string | null;
 
   /**
    * The user's email.
