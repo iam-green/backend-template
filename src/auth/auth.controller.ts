@@ -29,7 +29,7 @@ export class AuthController {
    */
   @TypedRoute.Get()
   @UseGuards(AuthGuard('jwt'))
-  auth(@Req() req: Request & { user: UserDto }) {
+  auth(@Req() req: Request & { user: UserDto }): UserDto {
     return req.user;
   }
 
