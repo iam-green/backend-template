@@ -25,7 +25,7 @@ export class AuthController {
   /**
    * @summary Get User Info
    * @description Get user info using jwt access token
-   * @security bearerAuth
+   * @security bearer
    */
   @TypedRoute.Get()
   @UseGuards(AuthGuard('jwt'))
