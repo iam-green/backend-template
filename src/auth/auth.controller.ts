@@ -34,11 +34,30 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleStrategy)
-  googleAuthCallback(
+  async googleAuthCallback(
     @Req()
     req: Request & { user: IGoogleUser },
+    @Res() res: Response,
   ) {
-    return req.user;
+    const user = await this.authService.googleLogin(
+      req.user.id,
+      req.user.email,
+    );
+
+    const { accessToken, refreshToken } = this.authService.generateToken({
+      id: user.id,
+    });
+
+    res.cookie('token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV == 'production',
+      maxAge: this.configService.get<number>(
+        'REFRESH_TOKEN_EXPIRES_IN',
+        1000 * 60 * 60 * 24 * 30,
+      ),
+    });
+
+    res.status(200).json({ accessToken });
   }
 
   @Get('discord')
@@ -47,8 +66,29 @@ export class AuthController {
 
   @Get('discord/callback')
   @UseGuards(DiscordStrategy)
-  discordAuthCallback(@Req() req: Request & { user: IDiscordUser }) {
-    return req.user;
+  async discordAuthCallback(
+    @Req() req: Request & { user: IDiscordUser },
+    @Res() res: Response,
+  ) {
+    const user = await this.authService.discordLogin(
+      req.user.id,
+      req.user.email,
+    );
+
+    const { accessToken, refreshToken } = this.authService.generateToken({
+      id: user.id,
+    });
+
+    res.cookie('token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV == 'production',
+      maxAge: this.configService.get<number>(
+        'REFRESH_TOKEN_EXPIRES_IN',
+        1000 * 60 * 60 * 24 * 30,
+      ),
+    });
+
+    res.status(200).json({ accessToken });
   }
 
   @Get('refresh')
