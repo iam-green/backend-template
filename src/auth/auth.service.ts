@@ -3,12 +3,14 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   generateToken(payload: { id: string }) {
@@ -53,5 +55,19 @@ export class AuthService {
     const decoded = this.verifyRefreshToken(refreshToken) as { id: string };
     if (!decoded) return null;
     return this.generateToken({ id: decoded.id });
+  }
+
+  async googleLogin(google_id: string, email: string) {
+    let user = await this.userService.getByEmail(email);
+    if (user && user.google_id != google_id)
+      user = await this.userService.update(user.id, { google_id });
+    return user ?? this.userService.create({ google_id, email });
+  }
+
+  async discordLogin(discord_id: string, email: string) {
+    let user = await this.userService.getByEmail(email);
+    if (user && user.discord_id != discord_id)
+      user = await this.userService.update(user.id, { discord_id });
+    return user ?? this.userService.create({ discord_id, email });
   }
 }
