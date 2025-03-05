@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && npm run build:swagger",
+    "build:swagger": "nestia swagger",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -32,6 +33,7 @@
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.0.6",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
@@ -93,6 +95,7 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@nestjs/core",
+      "@scarf/scarf",
       "@swc/core",
       "esbuild"
     ]
