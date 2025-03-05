@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import * as schema from './schema';
+import * as schema from './database.schema';
 import { Client } from 'pg';
 
 export const DrizzleProvider = 'DrizzleProvider';
