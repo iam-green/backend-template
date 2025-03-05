@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class DiscordStrategy extends PassportStrategy(Strategy) {
+export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
   constructor(readonly configService: ConfigService) {
     super({
       clientID: configService.get<string>('DISCORD_OAUTH_CLIENT_ID', ''),

@@ -61,13 +61,17 @@ export class AuthService {
     let user = await this.userService.getByEmail(email);
     if (user && user.google_id != google_id)
       user = await this.userService.update(user.id, { google_id });
-    return user ?? this.userService.create({ google_id, email });
+    return (
+      user ?? this.userService.create({ google_id, discord_id: null, email })
+    );
   }
 
   async discordLogin(discord_id: string, email: string) {
     let user = await this.userService.getByEmail(email);
     if (user && user.discord_id != discord_id)
       user = await this.userService.update(user.id, { discord_id });
-    return user ?? this.userService.create({ discord_id, email });
+    return (
+      user ?? this.userService.create({ google_id: null, discord_id, email })
+    );
   }
 }

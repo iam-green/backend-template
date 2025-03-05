@@ -10,6 +10,6 @@ import { UserModule } from 'src/user/user.module';
   imports: [PassportModule.register({}), JwtModule, UserModule],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, DiscordStrategy, JwtStrategy],
-  exports: [AuthService, GoogleStrategy, DiscordStrategy, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

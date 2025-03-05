@@ -1,18 +1,18 @@
 import {
   Controller,
-  Get,
   Req,
   Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { IDiscordUser, IGoogleUser } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { DiscordStrategy, GoogleStrategy } from './strategy';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { TypedRoute } from '@nestia/core';
+import { AuthGuard } from '@nestjs/passport';
+import { UserDto } from 'src/user/dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -22,18 +22,19 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
-  @Get()
+  @TypedRoute.Get()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
-  auth(@Req() req: Request) {
+  auth(@Req() req: Request & { user: UserDto }) {
     return req.user;
   }
 
-  @Get('google')
-  @UseGuards(GoogleStrategy)
+  @TypedRoute.Get('google')
+  @UseGuards(AuthGuard('google'))
   googleAuth() {}
 
-  @Get('google/callback')
-  @UseGuards(GoogleStrategy)
+  @TypedRoute.Get('google/callback')
+  @UseGuards(AuthGuard('google'))
   async googleAuthCallback(
     @Req()
     req: Request & { user: IGoogleUser },
@@ -60,12 +61,12 @@ export class AuthController {
     res.status(200).json({ accessToken });
   }
 
-  @Get('discord')
-  @UseGuards(DiscordStrategy)
+  @TypedRoute.Get('discord')
+  @UseGuards(AuthGuard('discord'))
   discordAuth() {}
 
-  @Get('discord/callback')
-  @UseGuards(DiscordStrategy)
+  @TypedRoute.Get('discord/callback')
+  @UseGuards(AuthGuard('discord'))
   async discordAuthCallback(
     @Req() req: Request & { user: IDiscordUser },
     @Res() res: Response,
@@ -91,7 +92,7 @@ export class AuthController {
     res.status(200).json({ accessToken });
   }
 
-  @Get('refresh')
+  @TypedRoute.Get('refresh')
   refresh(
     @Req() req: Request & { cookies: { token?: string } },
     @Res() res: Response,
