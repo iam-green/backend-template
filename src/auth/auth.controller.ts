@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { IDiscordUser, IGoogleUser } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { TypedRoute } from '@nestia/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto';
@@ -22,17 +22,29 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
 
+  /**
+   * @summary Get User Info
+   * @description Get user info using jwt access token
+   * @security bearerAuth
+   */
   @TypedRoute.Get()
-  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   auth(@Req() req: Request & { user: UserDto }) {
     return req.user;
   }
 
+  /**
+   * @summary Google OAuth
+   * @description Redirect to Google OAuth
+   */
   @TypedRoute.Get('google')
   @UseGuards(AuthGuard('google'))
   googleAuth() {}
 
+  /**
+   * @summary Google OAuth Callback
+   * @description Google OAuth Callback
+   */
   @TypedRoute.Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(
@@ -59,12 +71,21 @@ export class AuthController {
     });
 
     res.status(200).json({ accessToken });
+    return { accessToken };
   }
 
+  /**
+   * @summary Discord OAuth
+   * @description Redirect to Discord OAuth
+   */
   @TypedRoute.Get('discord')
   @UseGuards(AuthGuard('discord'))
   discordAuth() {}
 
+  /**
+   * @summary Discord OAuth Callback
+   * @description Discord OAuth Callback
+   */
   @TypedRoute.Get('discord/callback')
   @UseGuards(AuthGuard('discord'))
   async discordAuthCallback(
@@ -90,8 +111,13 @@ export class AuthController {
     });
 
     res.status(200).json({ accessToken });
+    return { accessToken };
   }
 
+  /**
+   * @summary Refresh Token
+   * @description Refresh access token using refresh token
+   */
   @TypedRoute.Get('refresh')
   refresh(
     @Req() req: Request & { cookies: { token?: string } },
@@ -113,5 +139,6 @@ export class AuthController {
     });
 
     res.status(200).json({ accessToken: token.accessToken });
+    return { accessToken: token.accessToken };
   }
 }
