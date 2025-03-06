@@ -12,7 +12,10 @@ async function bootstrap() {
   if (process.env.NODE_ENV != 'production') {
     const document = await NestiaSwaggerComposer.document(app, {
       security: { bearer: { type: 'http', scheme: 'bearer' } },
-      servers: [{ url: 'http://localhost:3000', description: 'Local Server' }],
+      servers: (process.env.SWAGGER_SERVERS ?? '').split(',').map((data) => ({
+        url: data.split(';')[0],
+        description: data.split(';')[1],
+      })),
     });
     SwaggerModule.setup('docs', app, document as OpenAPIObject);
   }

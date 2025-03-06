@@ -1,6 +1,7 @@
 import { INestiaConfig } from '@nestia/sdk';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './src/app.module';
+import 'dotenv/config';
 
 const NESTIA_CONFIG: INestiaConfig = {
   input: async () => {
@@ -11,7 +12,10 @@ const NESTIA_CONFIG: INestiaConfig = {
     openapi: '3.1',
     output: 'dist/swagger.json',
     security: { bearer: { type: 'http', scheme: 'bearer' } },
-    servers: [{ url: 'http://localhost:3000', description: 'Local Server' }],
+    servers: (process.env.SWAGGER_SERVERS ?? '').split(',').map((data) => ({
+      url: data.split(';')[0],
+      description: data.split(';')[1],
+    })),
     beautify: true,
   },
 };
