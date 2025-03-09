@@ -1,3 +1,3 @@
 import { UserDto } from './user.dto';
 
-export type CreateUserDto = Omit<UserDto, 'id' | 'created'>;
+export interface CreateUserDto extends Omit<UserDto, 'id' | 'created'> {}
