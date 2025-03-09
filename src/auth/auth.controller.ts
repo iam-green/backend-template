@@ -6,7 +6,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IDiscordUser, IGoogleUser } from './interface';
+import { IDiscordUser, IGoogleUser, AccessToken } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -23,7 +23,8 @@ export class AuthController {
   ) {}
 
   /**
-   * @summary Get User Info
+   * Get User Info
+   *
    * @description Get user info using jwt access token
    * @security bearer
    */
@@ -34,7 +35,8 @@ export class AuthController {
   }
 
   /**
-   * @summary Google OAuth
+   * Google OAuth
+   *
    * @description Redirect to Google OAuth
    */
   @TypedRoute.Get('google')
@@ -42,7 +44,8 @@ export class AuthController {
   googleAuth() {}
 
   /**
-   * @summary Google OAuth Callback
+   * Google OAuth Callback
+
    * @description Google OAuth Callback
    */
   @TypedRoute.Get('google/callback')
@@ -51,7 +54,7 @@ export class AuthController {
     @Req()
     req: Request & { user: IGoogleUser },
     @Res() res: Response,
-  ) {
+  ): Promise<AccessToken> {
     const user = await this.authService.googleLogin(
       req.user.id,
       req.user.email,
@@ -70,12 +73,13 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ accessToken });
-    return { accessToken };
+    res.status(200).json({ access_token: accessToken });
+    return { access_token: accessToken };
   }
 
   /**
-   * @summary Discord OAuth
+   * Discord OAuth
+   *
    * @description Redirect to Discord OAuth
    */
   @TypedRoute.Get('discord')
@@ -83,7 +87,8 @@ export class AuthController {
   discordAuth() {}
 
   /**
-   * @summary Discord OAuth Callback
+   * Discord OAuth Callback
+   *
    * @description Discord OAuth Callback
    */
   @TypedRoute.Get('discord/callback')
@@ -91,7 +96,7 @@ export class AuthController {
   async discordAuthCallback(
     @Req() req: Request & { user: IDiscordUser },
     @Res() res: Response,
-  ) {
+  ): Promise<AccessToken> {
     const user = await this.authService.discordLogin(
       req.user.id,
       req.user.email,
@@ -110,19 +115,20 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ accessToken });
-    return { accessToken };
+    res.status(200).json({ access_token: accessToken });
+    return { access_token: accessToken };
   }
 
   /**
-   * @summary Refresh Token
+   * Refresh Token
+   *
    * @description Refresh access token using refresh token
    */
   @TypedRoute.Get('refresh')
   refresh(
     @Req() req: Request & { cookies: { token?: string } },
     @Res() res: Response,
-  ) {
+  ): AccessToken {
     const refreshToken: string | undefined = req.cookies.token;
     if (!refreshToken) throw new UnauthorizedException();
 
@@ -138,7 +144,7 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ accessToken: token.accessToken });
-    return { accessToken: token.accessToken };
+    res.status(200).json({ access_token: token.accessToken });
+    return { access_token: token.accessToken };
   }
 }
