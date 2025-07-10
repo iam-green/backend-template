@@ -7,7 +7,12 @@ import 'dotenv/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  if (!process.env.FRONTEND_URL) app.enableCors();
+  else
+    app.enableCors({
+      origin: process.env.FRONTEND_URL.split(','),
+      credentials: true,
+    });
   app.use(cookieParser());
   if (process.env.NODE_ENV != 'production') {
     const document = await NestiaSwaggerComposer.document(app, {
