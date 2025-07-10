@@ -123,7 +123,7 @@ export class AuthController {
    *
    * @description Refresh access token using refresh token
    */
-  @TypedRoute.Get('refresh')
+  @TypedRoute.Get('token')
   refresh(
     @Req() req: Request & { cookies: { token?: string } },
     @Res() res: Response,
