@@ -3,4 +3,5 @@ export interface IDiscordUser {
   email: string;
   accessToken: string;
   refreshToken: string;
+  state?: string;
 }

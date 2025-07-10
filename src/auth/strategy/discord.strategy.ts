@@ -2,6 +2,7 @@ import { Strategy } from 'passport-discord';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
@@ -14,14 +15,25 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
       ),
       callbackURL: configService.get<string>('DISCORD_OAUTH_REDIRECT_URL', ''),
       scope: ['identify', 'email'],
+      passReqToCallback: true,
     });
   }
 
   validate(
+    req: Request,
     accessToken: string,
     refreshToken: string,
     profile: { id: string; email: string },
   ) {
-    return { accessToken, refreshToken, id: profile.id, email: profile.email };
+    const state = req.query.state
+      ? Buffer.from(req.query.state as string, 'base64').toString('utf-8')
+      : undefined;
+    return {
+      accessToken,
+      refreshToken,
+      id: profile.id,
+      email: profile.email,
+      state,
+    };
   }
 }
