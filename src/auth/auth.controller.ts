@@ -7,19 +7,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  IDiscordUser,
-  IGoogleUser,
-  AccessToken,
-  OAuthState,
-} from './interface';
+import { IDiscordUser, IGoogleUser, OAuthState } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto';
-import { LogoutDto, StateDto } from './dto';
+import { AccessTokenDto, LogoutDto, StateDto } from './dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -74,7 +69,7 @@ export class AuthController {
     @Req()
     req: Request & { user: IGoogleUser },
     @Res() res: Response,
-  ): Promise<AccessToken | void> {
+  ): Promise<AccessTokenDto | void> {
     const user = await this.authService.googleLogin(
       req.user.id,
       req.user.email,
@@ -137,7 +132,7 @@ export class AuthController {
   async discordAuthCallback(
     @Req() req: Request & { user: IDiscordUser },
     @Res() res: Response,
-  ): Promise<AccessToken | void> {
+  ): Promise<AccessTokenDto | void> {
     const user = await this.authService.discordLogin(
       req.user.id,
       req.user.email,
@@ -176,7 +171,7 @@ export class AuthController {
   refresh(
     @Req() req: Request & { cookies: { token?: string } },
     @Res() res: Response,
-  ): AccessToken {
+  ): AccessTokenDto {
     const refreshToken: string | undefined = req.cookies.token;
     if (!refreshToken) throw new UnauthorizedException();
 
