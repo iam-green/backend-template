@@ -6,7 +6,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IDiscordUser, IGoogleUser, AccessToken } from './interface';
+import {
+  IDiscordUser,
+  IGoogleUser,
+  AccessToken,
+  OAuthState,
+} from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -55,7 +60,7 @@ export class AuthController {
     @Req()
     req: Request & { user: IGoogleUser },
     @Res() res: Response,
-  ): Promise<AccessToken> {
+  ): Promise<AccessToken | void> {
     const user = await this.authService.googleLogin(
       req.user.id,
       req.user.email,
@@ -72,6 +77,15 @@ export class AuthController {
         1000 * 60 * 60 * 24 * 30,
       ),
     });
+
+    if (req.user.state)
+      try {
+        const state = JSON.parse(req.user.state) as OAuthState;
+        if (state.redirectUrl) return res.redirect(state.redirectUrl);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        /* empty */
+      }
 
     res.status(200).json({ accessToken: accessToken });
     return { accessToken: accessToken };
@@ -96,7 +110,7 @@ export class AuthController {
   async discordAuthCallback(
     @Req() req: Request & { user: IDiscordUser },
     @Res() res: Response,
-  ): Promise<AccessToken> {
+  ): Promise<AccessToken | void> {
     const user = await this.authService.discordLogin(
       req.user.id,
       req.user.email,
@@ -113,6 +127,15 @@ export class AuthController {
         1000 * 60 * 60 * 24 * 30,
       ),
     });
+
+    if (req.user.state)
+      try {
+        const state = JSON.parse(req.user.state) as OAuthState;
+        if (state.redirectUrl) return res.redirect(state.redirectUrl);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        /* empty */
+      }
 
     res.status(200).json({ accessToken: accessToken });
     return { accessToken: accessToken };
