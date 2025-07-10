@@ -73,8 +73,8 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ access_token: accessToken });
-    return { access_token: accessToken };
+    res.status(200).json({ accessToken: accessToken });
+    return { accessToken: accessToken };
   }
 
   /**
@@ -114,8 +114,8 @@ export class AuthController {
       ),
     });
 
-    res.status(200).json({ access_token: accessToken });
-    return { access_token: accessToken };
+    res.status(200).json({ accessToken: accessToken });
+    return { accessToken: accessToken };
   }
 
   /**
@@ -134,8 +134,8 @@ export class AuthController {
     const token = this.authService.refreshAccessToken(refreshToken);
     if (!token) throw new UnauthorizedException();
 
-    res.status(200).json({ access_token: token });
-    return { access_token: token };
+    res.status(200).json({ accessToken: token });
+    return { accessToken: token };
   }
 
   /**
