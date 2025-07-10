@@ -10,9 +10,10 @@ import { IDiscordUser, IGoogleUser, AccessToken } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
-import { TypedRoute } from '@nestia/core';
+import { TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto';
+import { LogoutDto } from './dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -60,9 +61,8 @@ export class AuthController {
       req.user.email,
     );
 
-    const { accessToken, refreshToken } = this.authService.generateToken({
-      id: user.id,
-    });
+    const accessToken = this.authService.generateAccessToken(user.id);
+    const refreshToken = this.authService.generateRefreshToken(user.id);
 
     res.cookie('token', refreshToken, {
       httpOnly: true,
@@ -102,9 +102,8 @@ export class AuthController {
       req.user.email,
     );
 
-    const { accessToken, refreshToken } = this.authService.generateToken({
-      id: user.id,
-    });
+    const accessToken = this.authService.generateAccessToken(user.id);
+    const refreshToken = this.authService.generateRefreshToken(user.id);
 
     res.cookie('token', refreshToken, {
       httpOnly: true,
@@ -135,16 +134,22 @@ export class AuthController {
     const token = this.authService.refreshAccessToken(refreshToken);
     if (!token) throw new UnauthorizedException();
 
-    res.cookie('token', token.refreshToken, {
+    res.status(200).json({ access_token: token });
+    return { access_token: token };
+  }
+
+  /**
+   * Logout
+   *
+   * @description Logout user by clearing the refresh token cookie
+   */
+  @TypedRoute.Get('logout')
+  logout(@Res() res: Response, @TypedQuery() query: LogoutDto): void {
+    res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV == 'production',
-      maxAge: this.configService.get<number>(
-        'REFRESH_TOKEN_EXPIRES_IN',
-        1000 * 60 * 60 * 24 * 30,
-      ),
     });
-
-    res.status(200).json({ access_token: token.accessToken });
-    return { access_token: token.accessToken };
+    if (query.redirectUrl) res.redirect(query.redirectUrl);
+    else res.status(200).json({ message: 'Logged out successfully' });
   }
 }
