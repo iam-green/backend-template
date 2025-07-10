@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Req,
@@ -18,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { TypedQuery, TypedRoute } from '@nestia/core';
 import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from 'src/user/dto';
-import { LogoutDto } from './dto';
+import { LogoutDto, StateDto } from './dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -46,8 +47,21 @@ export class AuthController {
    * @description Redirect to Google OAuth
    */
   @TypedRoute.Get('google')
-  @UseGuards(AuthGuard('google'))
-  googleAuth() {}
+  googleAuth(@Res() res: Response, @TypedQuery() state: StateDto) {
+    const clientId = this.configService.get<string>(
+      'GOOGLE_OAUTH_CLIENT_ID',
+      '',
+    );
+    const redirectUri = this.configService.get<string>(
+      'GOOGLE_OAUTH_REDIRECT_URL',
+      '',
+    );
+    const scope = this.configService.get<string>('GOOGLE_OAUTH_SCOPE', '');
+
+    res.redirect(
+      `https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&service=lso&o2v=2&flowName=GeneralOAuthFlow&state=${state.state}`,
+    );
+  }
 
   /**
    * Google OAuth Callback
@@ -82,7 +96,6 @@ export class AuthController {
       try {
         const state = JSON.parse(req.user.state) as OAuthState;
         if (state.redirectUrl) return res.redirect(state.redirectUrl);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         /* empty */
       }
@@ -97,8 +110,22 @@ export class AuthController {
    * @description Redirect to Discord OAuth
    */
   @TypedRoute.Get('discord')
-  @UseGuards(AuthGuard('discord'))
-  discordAuth() {}
+  discordAuth(@Res() res: Response, @TypedQuery() state: StateDto) {
+    // https://discord.com/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fdiscord%2Fcallback&scope=identify%20email&client_id=1335556138346745879
+    const clientId = this.configService.get<string>(
+      'DISCORD_OAUTH_CLIENT_ID',
+      '',
+    );
+    const redirectUri = this.configService.get<string>(
+      'DISCORD_OAUTH_REDIRECT_URL',
+      '',
+    );
+    const scope = this.configService.get<string>('DISCORD_OAUTH_SCOPE', '');
+
+    res.redirect(
+      `https://discord.com/oauth2/authorize?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&state=${state.state}`,
+    );
+  }
 
   /**
    * Discord OAuth Callback
@@ -132,7 +159,6 @@ export class AuthController {
       try {
         const state = JSON.parse(req.user.state) as OAuthState;
         if (state.redirectUrl) return res.redirect(state.redirectUrl);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         /* empty */
       }
