@@ -6,7 +6,8 @@ import {
 } from 'src/database/database.module';
 import { oauth } from './oauth.schema';
 import { oauthTypeEnum } from 'src/database/database.enum';
-import { CreateOAuthDto, UpdateOAuthDto } from './dto';
+import { CreateOAuthDto, OAuthDto, UpdateOAuthDto } from './dto';
+import typia from 'typia';
 
 @Injectable()
 export class OAuthService {
@@ -16,30 +17,38 @@ export class OAuthService {
   ) {}
 
   async get(id: string) {
-    return await this.db.query.oauth.findFirst({
-      where: eq(oauth.id, id),
-    });
+    return typia.assert<OAuthDto | undefined>(
+      await this.db.query.oauth.findFirst({
+        where: eq(oauth.id, id),
+      }),
+    );
   }
 
   async getByUser(
     userId: string,
     type: (typeof oauthTypeEnum.enumValues)[number],
   ) {
-    return await this.db.query.oauth.findFirst({
-      where: and(eq(oauth.user_id, userId), eq(oauth.type, type)),
-    });
+    return typia.assert<OAuthDto | undefined>(
+      await this.db.query.oauth.findFirst({
+        where: and(eq(oauth.user_id, userId), eq(oauth.type, type)),
+      }),
+    );
   }
 
   async create(data: CreateOAuthDto) {
-    return await this.db.insert(oauth).values(data).returning();
+    return typia.assert<OAuthDto>(
+      await this.db
+        .insert(oauth)
+        .values(data)
+        .onConflictDoNothing()
+        .returning(),
+    );
   }
 
   async update(id: string, data: UpdateOAuthDto) {
-    return await this.db
-      .update(oauth)
-      .set(data)
-      .where(eq(oauth.id, id))
-      .returning();
+    return typia.assert<OAuthDto>(
+      await this.db.update(oauth).set(data).where(eq(oauth.id, id)).returning(),
+    );
   }
 
   async delete(id: string) {
