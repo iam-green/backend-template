@@ -33,6 +33,11 @@ export interface OAuthDto {
   refresh_token: string | null;
 
   /**
+   * Token expire date
+   */
+  token_expire: Date;
+
+  /**
    * Created date
    */
   created: Date;
