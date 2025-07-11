@@ -15,6 +15,13 @@
       "when": 1752223794165,
       "tag": "0001_known_stardust",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752227608163,
+      "tag": "0002_bored_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }

@@ -25,12 +25,12 @@ export interface OAuthDto {
   /**
    * Access token
    */
-  access_token: string | null;
+  access_token: string;
 
   /**
    * Refresh token
    */
-  refresh_token: string | null;
+  refresh_token: string;
 
   /**
    * Token expire date

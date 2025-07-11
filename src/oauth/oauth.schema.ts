@@ -9,8 +9,8 @@ export const oauth = pgTable('oauth', {
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
   type: oauthTypeEnum().notNull(),
-  access_token: text(),
-  refresh_token: text(),
+  access_token: text().notNull(),
+  refresh_token: text().notNull(),
   token_expire: timestamp({ withTimezone: true }).notNull(),
   created: timestamp({ withTimezone: true }).notNull().defaultNow(),
   updated: timestamp({ withTimezone: true })
