@@ -54,4 +54,20 @@ export class OAuthService {
   async delete(id: string) {
     await this.db.delete(oauth).where(eq(oauth.id, id));
   }
+
+  async getAccessToken(
+    userId: string,
+    type: (typeof oauthTypeEnum.enumValues)[number],
+  ) {
+    const data = await this.getByUser(userId, type);
+    return data?.access_token ?? undefined;
+  }
+
+  async getRefreshToken(
+    userId: string,
+    type: (typeof oauthTypeEnum.enumValues)[number],
+  ) {
+    const data = await this.getByUser(userId, type);
+    return data?.refresh_token ?? undefined;
+  }
 }
