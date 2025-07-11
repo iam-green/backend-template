@@ -7,12 +7,14 @@ import { CreateUserDto, UpdateUserDto, FindUserDto, UserDto } from './dto';
 import { and, asc, between, desc, eq } from 'drizzle-orm';
 import { user } from './user.schema';
 import typia from 'typia';
+import { OAuthService } from 'src/oauth/oauth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(DrizzleProvider)
     private readonly db: DrizzleProviderType,
+    private readonly oauthService: OAuthService,
   ) {}
 
   async find(data: FindUserDto) {
@@ -57,18 +59,22 @@ export class UserService {
     );
   }
 
-  async getByGoogleId(google_id: string) {
+  async getByGoogleId(id: string) {
+    const oauth = await this.oauthService.getByUser(id, 'google');
+    if (!oauth) return undefined;
     return typia.assert<UserDto | undefined>(
       await this.db.query.user.findFirst({
-        where: eq(user.google_id, google_id),
+        where: eq(user.id, oauth.user_id),
       }),
     );
   }
 
-  async getByDiscordId(discord_id: string) {
+  async getByDiscordId(id: string) {
+    const oauth = await this.oauthService.getByUser(id, 'discord');
+    if (!oauth) return undefined;
     return typia.assert<UserDto | undefined>(
       await this.db.query.user.findFirst({
-        where: eq(user.discord_id, discord_id),
+        where: eq(user.id, oauth.user_id),
       }),
     );
   }

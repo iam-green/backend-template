@@ -7,16 +7,6 @@ export interface UserDto {
   id: string & tags.Format<'uuid'>;
 
   /**
-   * The user's Google ID.
-   */
-  google_id: string | null;
-
-  /**
-   * The user's Discord ID.
-   */
-  discord_id: string | null;
-
-  /**
    * The user's email.
    */
   email: string & tags.Format<'email'>;

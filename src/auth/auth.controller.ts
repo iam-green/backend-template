@@ -54,7 +54,7 @@ export class AuthController {
     const scope = this.configService.get<string>('GOOGLE_OAUTH_SCOPE', '');
 
     res.redirect(
-      `https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&service=lso&o2v=2&flowName=GeneralOAuthFlow&state=${state.state}`,
+      `https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&access_type=offline&prompt=consent&service=lso&o2v=2&flowName=GeneralOAuthFlow&state=${state.state ?? ''}`,
     );
   }
 
@@ -70,12 +70,8 @@ export class AuthController {
     req: Request & { user: IOAuthUser },
     @Res() res: Response,
   ): Promise<AccessTokenDto | void> {
-    const user = await this.authService.googleLogin(
-      req.user.id,
-      req.user.email,
-    );
+    const user = await this.authService.googleLogin(req.user);
 
-    const accessToken = this.authService.generateAccessToken(user.id);
     const refreshToken = this.authService.generateRefreshToken(user.id);
 
     res.cookie('token', refreshToken, {
@@ -95,8 +91,9 @@ export class AuthController {
         /* empty */
       }
 
-    res.status(200).json({ accessToken: accessToken });
-    return { accessToken: accessToken };
+    const accessToken = this.authService.generateAccessToken(user.id);
+    res.status(200).json({ accessToken });
+    return { accessToken };
   }
 
   /**
@@ -118,7 +115,7 @@ export class AuthController {
     const scope = this.configService.get<string>('DISCORD_OAUTH_SCOPE', '');
 
     res.redirect(
-      `https://discord.com/oauth2/authorize?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&state=${state.state}`,
+      `https://discord.com/oauth2/authorize?response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}&client_id=${clientId}&access_type=offline&prompt=consent&state=${state.state ?? ''}`,
     );
   }
 
@@ -133,12 +130,8 @@ export class AuthController {
     @Req() req: Request & { user: IOAuthUser },
     @Res() res: Response,
   ): Promise<AccessTokenDto | void> {
-    const user = await this.authService.discordLogin(
-      req.user.id,
-      req.user.email,
-    );
+    const user = await this.authService.discordLogin(req.user);
 
-    const accessToken = this.authService.generateAccessToken(user.id);
     const refreshToken = this.authService.generateRefreshToken(user.id);
 
     res.cookie('token', refreshToken, {
@@ -158,8 +151,9 @@ export class AuthController {
         /* empty */
       }
 
-    res.status(200).json({ accessToken: accessToken });
-    return { accessToken: accessToken };
+    const accessToken = this.authService.generateAccessToken(user.id);
+    res.status(200).json({ accessToken });
+    return { accessToken };
   }
 
   /**

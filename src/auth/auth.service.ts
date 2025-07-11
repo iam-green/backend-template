@@ -2,13 +2,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { OAuthService } from 'src/oauth/oauth.service';
 import { UserService } from 'src/user/user.service';
+import { IOAuthUser } from './interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly oauthService: OAuthService,
     private readonly userService: UserService,
   ) {}
 
@@ -64,21 +67,43 @@ export class AuthService {
     return this.generateRefreshToken(decoded.id);
   }
 
-  async googleLogin(google_id: string, email: string) {
-    let user = await this.userService.getByEmail(email);
-    if (user && user.google_id != google_id)
-      user = await this.userService.update(user.id, { google_id });
-    return (
-      user ?? this.userService.create({ google_id, discord_id: null, email })
-    );
+  async googleLogin(data: IOAuthUser) {
+    let user = await this.userService.getByEmail(data.email);
+    if (!user) user = await this.userService.create({ email: data.email });
+    const oauth = await this.oauthService.getByUser(user.id, 'google');
+    if (!oauth)
+      await this.oauthService.create({
+        oauth_id: data.id,
+        user_id: user.id,
+        type: 'google',
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+      });
+    else
+      await this.oauthService.update(oauth.id, {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+      });
+    return user;
   }
 
-  async discordLogin(discord_id: string, email: string) {
-    let user = await this.userService.getByEmail(email);
-    if (user && user.discord_id != discord_id)
-      user = await this.userService.update(user.id, { discord_id });
-    return (
-      user ?? this.userService.create({ google_id: null, discord_id, email })
-    );
+  async discordLogin(data: IOAuthUser) {
+    let user = await this.userService.getByEmail(data.email);
+    if (!user) user = await this.userService.create({ email: data.email });
+    const oauth = await this.oauthService.getByUser(user.id, 'discord');
+    if (!oauth)
+      await this.oauthService.create({
+        oauth_id: data.id,
+        user_id: user.id,
+        type: 'discord',
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+      });
+    else
+      await this.oauthService.update(oauth.id, {
+        access_token: data.accessToken,
+        refresh_token: data.refreshToken,
+      });
+    return user;
   }
 }
