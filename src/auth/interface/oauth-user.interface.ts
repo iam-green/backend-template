@@ -1,4 +1,4 @@
-export interface IDiscordUser {
+export interface IOAuthUser {
   id: string;
   email: string;
   accessToken: string;

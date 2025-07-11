@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IDiscordUser, IGoogleUser, OAuthState } from './interface';
+import { IOAuthUser, OAuthState } from './interface';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
@@ -67,7 +67,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(
     @Req()
-    req: Request & { user: IGoogleUser },
+    req: Request & { user: IOAuthUser },
     @Res() res: Response,
   ): Promise<AccessTokenDto | void> {
     const user = await this.authService.googleLogin(
@@ -130,7 +130,7 @@ export class AuthController {
   @TypedRoute.Get('discord/callback')
   @UseGuards(AuthGuard('discord'))
   async discordAuthCallback(
-    @Req() req: Request & { user: IDiscordUser },
+    @Req() req: Request & { user: IOAuthUser },
     @Res() res: Response,
   ): Promise<AccessTokenDto | void> {
     const user = await this.authService.discordLogin(
