@@ -1,6 +1,6 @@
 import { tags } from 'typia';
 
-export class LogoutDto {
+export interface LogoutDto {
   /**
    * The URL to redirect to after logout.
    */

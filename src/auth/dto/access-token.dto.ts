@@ -1,4 +1,4 @@
-export class AccessTokenDto {
+export interface AccessTokenDto {
   /**
    * OAuth access token.
    *

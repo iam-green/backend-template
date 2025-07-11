@@ -1,4 +1,4 @@
-export class StateDto {
+export interface StateDto {
   /**
    * OAuth state parameter.
    *
