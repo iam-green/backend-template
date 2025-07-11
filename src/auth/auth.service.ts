@@ -78,11 +78,13 @@ export class AuthService {
         type: 'google',
         access_token: data.accessToken,
         refresh_token: data.refreshToken,
+        token_expire: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
       });
     else
       await this.oauthService.update(oauth.id, {
         access_token: data.accessToken,
         refresh_token: data.refreshToken,
+        token_expire: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
       });
     return user;
   }
@@ -98,11 +100,13 @@ export class AuthService {
         type: 'discord',
         access_token: data.accessToken,
         refresh_token: data.refreshToken,
+        token_expire: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
       });
     else
       await this.oauthService.update(oauth.id, {
         access_token: data.accessToken,
         refresh_token: data.refreshToken,
+        token_expire: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
       });
     return user;
   }
