@@ -16,12 +16,18 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  validate(req: Request, accessToken: string, _: string, profile: Profile) {
+  validate(
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+  ) {
     const state = req.query.state
       ? Buffer.from(req.query.state as string, 'base64').toString('utf-8')
       : undefined;
     return {
       accessToken,
+      refreshToken,
       id: profile.id,
       email: profile.emails![0].value,
       state,
