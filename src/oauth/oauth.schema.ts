@@ -13,5 +13,8 @@ export const oauth = pgTable('oauth', {
   refresh_token: text(),
   token_expire: timestamp({ withTimezone: true }).notNull(),
   created: timestamp({ withTimezone: true }).notNull().defaultNow(),
-  updated: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  updated: timestamp({ withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdateFn(() => new Date()),
 });

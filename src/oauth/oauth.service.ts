@@ -37,7 +37,7 @@ export class OAuthService {
   async update(id: string, data: UpdateOAuthDto) {
     return await this.db
       .update(oauth)
-      .set({ ...data, updated: new Date() })
+      .set(data)
       .where(eq(oauth.id, id))
       .returning();
   }
