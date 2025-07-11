@@ -15,7 +15,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
         '',
       ),
       callbackURL: configService.get<string>('DISCORD_OAUTH_REDIRECT_URL', ''),
-      scope: configService.get<string>('DISCORD_OAUTH_SCOPE', '').split(''),
+      scope: configService.get<string>('DISCORD_OAUTH_SCOPE', '').split(' '),
       passReqToCallback: true,
     });
   }
