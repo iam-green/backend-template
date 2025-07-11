@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
+import { IOAuthUser } from '../interface';
 
 @Injectable()
 export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
@@ -24,7 +25,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
     accessToken: string,
     refreshToken: string,
     profile: { id: string; email: string },
-  ) {
+  ): IOAuthUser {
     const state = req.query.state
       ? Buffer.from(req.query.state as string, 'base64').toString('utf-8')
       : undefined;
