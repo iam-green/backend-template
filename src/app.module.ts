@@ -5,9 +5,12 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { CacheModule } from './cache/cache.module';
 import { OAuthModule } from './oauth/oauth.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
@@ -17,6 +20,7 @@ import { OAuthModule } from './oauth/oauth.module';
     OAuthModule,
     UserModule,
     AuthModule,
+    TaskModule,
   ],
 })
 export class AppModule {}
